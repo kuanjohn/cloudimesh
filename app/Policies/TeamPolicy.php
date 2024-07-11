@@ -23,6 +23,7 @@ class TeamPolicy
      */
     public function view(User $user, Team $team): bool
     {
+        // dd($user);
         return $user->belongsToTeam($team);
     }
 
@@ -47,7 +48,7 @@ class TeamPolicy
      */
     public function addTeamMember(User $user, Team $team): bool
     {
-        return $user->ownsTeam($team);
+        return $user->belongsToTeam($team);
     }
 
     /**
@@ -55,7 +56,7 @@ class TeamPolicy
      */
     public function updateTeamMember(User $user, Team $team): bool
     {
-        return $user->ownsTeam($team);
+        return $user->hasTeamRole($team, 'admin');
     }
 
     /**
@@ -63,7 +64,7 @@ class TeamPolicy
      */
     public function removeTeamMember(User $user, Team $team): bool
     {
-        return $user->ownsTeam($team);
+        return $user->hasTeamRole($team, 'admin');
     }
 
     /**
@@ -72,5 +73,13 @@ class TeamPolicy
     public function delete(User $user, Team $team): bool
     {
         return $user->ownsTeam($team);
+    }
+
+     /**
+     * Determine whether the user can update team member permissions.
+     */
+    public function isAdmin(User $user, Team $team): bool
+    {
+        return $user->hasTeamRole($team, 'admin');
     }
 }

@@ -20,6 +20,8 @@ class JetstreamServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+        Jetstream::ignoreRoutes();
+
     }
 
     /**
@@ -57,5 +59,36 @@ class JetstreamServiceProvider extends ServiceProvider
             'create',
             'update',
         ])->description('Editor users have the ability to read, create, and update.');
+
+        Jetstream::role('approver1', 'Approver Group 1', [
+            'read',
+            'create',
+            'update',
+        ])->description('Approver Group 1 users have the ability to approve project, read, create, and update.');
+
+        Jetstream::role('approver2', 'Approver Group 2', [
+            'read',
+            'create',
+            'update',
+        ])->description('Approver Group 2 users have the ability to approve project, read, create, and update.');
+
+        Jetstream::role('approver3', 'Approver Group 3', [
+            'read',
+            'create',
+            'update',
+        ])->description('Approver Group 3 users have the ability approve project, to read, create, and update.');
+
+        Jetstream::role('approver4', 'Approver Group 4', [
+            'read',
+            'create',
+            'update',
+        ])->description('Approver Group 4 users have the ability approve project, to read, create, and update.');
+
+        Jetstream::role('approver5', 'Approver Group 5', [
+            'read',
+            'create',
+            'update',
+        ])->description('Approver Group 5 users have the ability approve project, to read, create, and update.');
+        
     }
 }

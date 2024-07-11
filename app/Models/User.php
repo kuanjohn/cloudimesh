@@ -6,10 +6,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Jetstream\HasTeams;
+use App\Models\HasTeams;
+use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
+
 
 class User extends Authenticatable
 {
@@ -19,6 +22,8 @@ class User extends Authenticatable
     use HasTeams;
     use Notifiable;
     use TwoFactorAuthenticatable;
+
+    use HasProjects;
 
     /**
      * The attributes that are mass assignable.
@@ -63,5 +68,42 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isAdmin()
+    {
+        // Fetch the user's role from the pivot table
+        $user = Auth::user();
+        $isAdmin = $this->hasTeamRole($user->currentTeam, 'admin');
+        return $isAdmin;
+    }
+
+    public function teams()
+    {
+        return $this->belongsToMany(Jetstream::teamModel(), Jetstream::membershipModel())
+                        ->withPivot('role','department_id')
+                        ->withTimestamps()
+                        ->as('membership');
+    }
+
+    // public function department()
+    // {
+    //     return $this->belongsToMany(Department::class, 'team_user')->wherePivot('team_id', $this->current_team_id);
+    // }
+
+    public function department()
+    {
+        return $this->belongsToMany(Department::class, 'team_user')->withTimestamps();
+    }
+
+    public function own_projects()
+    {
+        return $this->hasMany(Project::class, 'owner');
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_users')
+        ->withPivot('role');
     }
 }
